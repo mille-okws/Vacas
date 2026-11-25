@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vacas-v2"
+version = "0.2.0"
+description = "Vacas V2: planejar o nascimento dos bezerros (monta, partos, desmama) a partir da chuva"
+requires-python = ">=3.11"
+dependencies = ["requests>=2.31,<3", "PyYAML>=6,<7", "tzdata; sys_platform == 'win32'"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<9"]
+
+[project.scripts]
+vacas = "vacas.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["vacas", "vacas.*"]
+
+[tool.setuptools.package-data]
+vacas = ["resources/*.html", "web/*", "web/assets/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vacas · monta e chuva</title>
+<style>
+:root{color-scheme:light;--page:#f6f5f1;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#898781;--grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);
+--s1:#2a78d6;--s1-rest:#b7d3f6;--s1-track:#cde2fb;--future:#eb6834;--monta:#1baf7a;--parto:#52514e;--amam:#d3d1c7;--seca:#efebe0;--good:#0ca30c;--crit:#d03b3b;--neutral:#e4e1d8;--on-fill:#fff;--d1:#7ab4fe;--d2:#5e9ae7;--d3:#4682cc;--d4:#2e69b2;--d5:#135298;--d6:#013c79;--neg:#e34948}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);
+--s1:#3987e5;--s1-rest:#2b4f7e;--s1-track:#1f3550;--future:#d95926;--monta:#199e70;--parto:#c3c2b7;--amam:#4a4a45;--seca:#26251f;--neutral:#34332f;--d1:#135298;--d2:#316cb5;--d3:#4c88d3;--d4:#67a4f1;--d5:#91c1ff;--d6:#c3ddff;--neg:#e66767}}
+:root[data-theme="dark"]{color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);
+--s1:#3987e5;--s1-rest:#2b4f7e;--s1-track:#1f3550;--future:#d95926;--monta:#199e70;--parto:#c3c2b7;--amam:#4a4a45;--seca:#26251f;--neutral:#34332f;--d1:#135298;--d2:#316cb5;--d3:#4c88d3;--d4:#67a4f1;--d5:#91c1ff;--d6:#c3ddff;--neg:#e66767}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font:13px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+.shell{max-width:1280px;margin:auto;padding:14px 16px 24px}
+.bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:12px}
+.bar h1{font-size:17px;margin:0 6px 0 0;font-weight:700}
+.chip{padding:3px 9px;border:1px solid var(--border);border-radius:999px;color:var(--ink2);background:var(--surface);font-size:12px}
+.sp{flex:1}
+.step{display:flex;align-items:center;gap:6px}
+.step button,.step select,.link{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer}
+.step button:hover,.link:hover{border-color:var(--axis)}
+.step button:focus-visible,.step select:focus-visible,.link:focus-visible,svg:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+.scn{font-size:12px;color:var(--ink2)}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}
+.card{grid-column:span 12;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;min-width:0}
+.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}
+.hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;margin-bottom:6px}
+.hd h2{font-size:14px;margin:0}.hd .sub{color:var(--muted);font-size:12px}.hd .rt{margin-left:auto;color:var(--ink2);font-size:12px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink2);margin:2px 0 4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}.sw{width:12px;height:8px;border-radius:2px;display:inline-block}.ln{width:14px;height:2px;display:inline-block}
+.kpis{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr)) auto;gap:12px;align-items:stretch}
+.kpi{padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;min-width:0}
+.kpi .l{font-size:12px;color:var(--muted)}.kpi .v{font-size:22px;font-weight:650;margin-top:2px;white-space:nowrap}
+.kpi .s{font-size:12px;color:var(--ink2)}
+.kpi.hero .v{font-size:48px;line-height:1.05;font-weight:700}.kpi.hero .v small{font-size:16px;font-weight:500;color:var(--ink2)}
+.pill{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:14px;border:1px solid var(--border);background:var(--surface);font-weight:650;white-space:nowrap}
+.pill i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-size:13px}
+.pill.favorable i{background:var(--good)}.pill.unfavorable i{background:var(--crit)}.pill.indeterminate i{background:var(--muted)}
+.meters{display:grid;gap:9px}
+.meter{display:grid;grid-template-columns:minmax(96px,150px) minmax(0,1fr) 92px;gap:10px;align-items:center}
+.meter .n{font-size:12.5px}.meter .n small{display:block;color:var(--muted);font-size:11px}
+.track{position:relative;height:10px;border-radius:999px;background:var(--s1-track)}
+.fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px}
+.fill.ok{background:var(--good)}.fill.no{background:var(--crit)}.fill.na,.fill.info{background:var(--muted)}
+.tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:1px}
+.meter .v{font-size:12.5px;text-align:right;white-space:nowrap}.meter .v b{font-size:14px}
+.ico{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;color:#fff;font-size:10px;margin-left:5px;font-weight:700}
+.ico.ok{background:var(--good)}.ico.no{background:var(--crit)}.ico.na{background:var(--muted)}
+.empty{color:var(--muted);font-size:12px;padding:8px 0}
+svg{display:block;max-width:100%;overflow:visible}svg text{font-family:inherit;fill:var(--muted);font-size:11px}
+svg .ink{fill:var(--ink2)}svg .strong{fill:var(--ink);font-weight:600}
+.grid-hair{stroke:var(--grid);stroke-width:1}.axis-line{stroke:var(--axis);stroke-width:1}
+#tip{position:fixed;z-index:9;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 18px rgba(0,0,0,.18);padding:7px 10px;font-size:12px;max-width:260px}
+#tip .tt{font-weight:650;margin-bottom:3px}#tip .tr{display:flex;align-items:center;gap:6px;line-height:1.6}#tip .tr b{font-weight:650}#tip .tr span{color:var(--ink2)}#tip .tr i{width:10px;height:2px;border-radius:1px;display:inline-block}
+details{margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px}
+summary{cursor:pointer;font-weight:650}
+table{border-collapse:collapse;width:100%;font-size:12px;margin-top:8px}th,td{padding:5px 8px;text-align:left;border-bottom:1px solid var(--grid)}th{position:sticky;top:0;background:var(--surface);color:var(--ink2)}
+.tbl{max-height:360px;overflow:auto}
+.gh-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:6px;font-size:12px;color:var(--ink2)}.gh-legend .muted-note{color:var(--muted);max-width:640px}.gh-legend .sw{width:12px;height:12px;border-radius:3px;display:inline-block;vertical-align:middle}.gh-legend .hollow{border:1px solid var(--axis);margin-right:5px}.gh-legend .ramp{display:inline-flex;align-items:center;gap:4px}
+.plate{--ink:#f0efec;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#4a4a46;--seca:#2b2a25;--surface:#161615;background:#161615;border-radius:10px;padding:10px 10px 8px}.scale{display:inline-flex;flex-direction:column;gap:2px;width:230px}.scale .bar{height:10px;border-radius:5px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(90deg,rgba(26,26,26,1) 0%,rgba(255,0,0,1) 25%,rgba(255,140,0,1) 50%,rgba(255,229,0,1) 75%,rgba(0,255,21,1) 100%)}.scale .ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}.scale .ticks b{font-weight:400}
+.scn{position:sticky;top:0;z-index:6;background:var(--page);padding:6px 0 10px}
+.scn-in{display:grid;grid-template-columns:minmax(250px,330px) minmax(0,1fr);gap:10px 22px;align-items:start;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 14px;box-shadow:0 8px 20px rgba(0,0,0,.08)}
+.scn .lbl{display:block;font-size:12px;font-weight:650;color:var(--ink2);margin-bottom:5px}.scn .lbl .hint{font-weight:400;color:var(--muted)}
+.scn-year{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:center}
+.scn-year input[type=range]{width:100%;accent-color:var(--s1);height:22px;cursor:pointer}
+.scn-year output{font-size:28px;font-weight:700;min-width:70px;text-align:right;line-height:1}
+.scn-year button{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer}
+.scn-year button:disabled{opacity:.35;cursor:default}.scn-year button:hover:not(:disabled){border-color:var(--axis)}
+.ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:0 44px 0 40px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chipb{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer;font:inherit;font-size:12.5px}
+.chipb:hover{border-color:var(--axis)}.chipb:focus-visible,.scn-year button:focus-visible,.scn-year input:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+.chipb i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(160,160,160,.55);display:inline-block}
+.chipb[aria-checked=true]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:650;background:var(--seca)}
+.scn-note{grid-column:1/-1;font-size:13px;color:var(--ink);border-top:1px solid var(--grid);padding-top:7px}
+.scn-note b{font-weight:650}
+.evo{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:8px 20px}.evo h3{font-size:12px;margin:2px 0 4px;color:var(--ink2);font-weight:650}
+@media(max-width:980px){.evo{grid-template-columns:1fr}.scn{position:static}.scn-in{grid-template-columns:1fr}}
+#attn.warn{margin:12px 0 0}
+.lgb{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--ink2);font:inherit;font-size:12px;cursor:pointer;padding:2px 5px;border-radius:6px}.lgb[aria-pressed=false]{opacity:.42}.lgb:hover{background:var(--seca)}.lgb:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
+.foot{color:var(--muted);font-size:12px;margin-top:12px}
+.warn{background:var(--seca);border-left:3px solid var(--future);padding:8px 12px;border-radius:8px;margin-bottom:12px;font-size:12px}
+@media(max-width:980px){.kpi .v{font-size:19px}.c6,.c4,.c3{grid-column:span 12}.kpis{grid-template-columns:1fr 1fr}.kpi.hero{grid-column:span 2}.pill{grid-column:span 2;justify-content:center}.meter{grid-template-columns:110px minmax(0,1fr) 84px}}
+</style></head><body><main class="shell">
+<div class="bar"><h1>Vacas · monta e chuva</h1><span class="chip" id="c-loc"></span><span class="chip" id="c-breed"></span></div>
+<section class="scn" aria-label="Escolha do cenário"><div class="scn-in">
+<div><span class="lbl">1 · Ano da monta</span><div class="scn-year"><button id="prev" aria-label="Ano anterior">◀</button><input type="range" id="yr" aria-label="Ano da monta"><button id="next" aria-label="Próximo ano">▶</button><output id="yrout" for="yr"></output></div><div class="ends"><span id="ymin"></span><span id="ymax"></span></div></div>
+<div><span class="lbl">2 · Quando a monta começa <span class="hint">· a bolinha mostra a adequação do mês naquele ano (preto 0 → verde 100)</span></span><div class="chips" id="chips" role="radiogroup" aria-label="Início da monta"></div></div>
+<div class="scn-note" id="scnnote"></div></div></section>
+<div id="warn"></div>
+<div class="kpis" id="kpis"></div><div id="attn"></div>
+<div class="grid" style="margin-top:12px">
+<section class="card"><div class="hd"><h2 id="t-tl">O ciclo sobre a chuva</h2><span class="sub">cada barra = 1 semana</span></div>
+<div class="legend"><span><i class="sw" style="background:var(--s1)"></i>chuva semanal</span><span><i class="ln" style="background:var(--muted)"></i>mediana de todos os anos</span><span><i class="sw" style="background:var(--seca);border:1px solid var(--axis)"></i>seca</span><span><i class="sw" style="background:var(--monta)"></i>monta</span><span><i class="sw" style="background:var(--parto)"></i>partos</span><span><i class="sw" style="background:var(--amam)"></i>amamentação</span></div>
+<div id="tl"></div></section>
+<section class="card c6"><div class="hd"><h2 id="t-why">Por que este resultado?</h2><span class="sub">traço = limite</span></div><div class="meters" id="why"></div></section>
+<section class="card c6"><div class="hd"><h2 id="t-expo">Chance na próxima monta</h2><span class="sub">dias de exposição · traço = 1 ciclo estral · só informa, não entra no índice</span></div><div class="meters" id="expo"></div></section>
+<section class="card"><div class="hd"><h2 id="t-cal">E se a monta começar em outro mês?</h2><span class="sub">quanto mais verde, mais adequado · clique num quadrado para ver aquele ano e mês</span></div>
+<div class="plate"><div id="heat"></div>
+<div class="gh-legend"><span class="muted-note">Índice de adequação do mês de início (0–100): o menor entre chuva até a monta, chuva na amamentação e veranico, como fração do limite atingida. Preto = 0, verde = 100. Não é probabilidade.</span><span class="sp"></span>
+<span><i class="sw hollow"></i>sem dado</span><span class="scale"><span class="bar"></span><span class="ticks"><b>0</b><b>25</b><b>50</b><b>75</b><b>100</b></span></span></div></div></section><section class="card c6"><div class="hd"><h2 id="t-onset">Quando as águas chegam</h2><span class="sub">início da monta</span><span class="rt" id="onset-rt"></span></div><div class="legend"><span><i class="ln" style="background:var(--s1)"></i>início em cada ano</span><span><i class="sw" style="background:var(--s1);opacity:.25"></i>faixa P10–P90 (80% dos anos)</span><span><i class="ln" style="background:var(--muted)"></i>mediana</span></div><div id="onset"></div></section>
+<section class="card c6"><div class="hd"><h2 id="t-seca">Quanto dura a seca</h2><span class="sub">dias</span><span class="rt" id="seca-rt"></span></div><div id="seca"></div></section>
+<section class="card"><div class="hd"><h2 id="t-evo">Como a chuva muda ao longo dos anos</h2><span class="sub">chuva de cada mês, uma linha por década · ano pecuário (set a ago)</span><span class="rt" id="evo-rt"></span></div>
+<div class="legend" id="mon-leg"></div><div class="evo"><div><h3>Chuva de cada mês, por década</h3><div id="mon"></div></div><div><h3>Mudança por mês: última década menos a primeira</h3><div id="mon-d"></div></div></div></section>
+</div>
+<details><summary>Tabela e parâmetros</summary><div class="tbl"><table id="tbl"></table></div><table id="params"></table></details>
+<p class="foot">Triagem climática; não substitui zootecnista nem veterinário. Clima futuro é cenário, não previsão. Limiares marcados como premissa não estão calibrados para a fazenda.<br><span id="src"></span></p>
+</main><div id="tip" hidden></div>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(()=>{'use strict';
+const data=JSON.parse(document.getElementById('data').textContent),el=id=>document.getElementById(id);
+const p=data.parameters,meta=data.meta||{},plan=data.plan,rows=data.rows,MS=864e5,NS='http://www.w3.org/2000/svg';
+const D=s=>{const[y,m,d]=s.split('-').map(Number);return Date.UTC(y,m-1,d)};
+const T0=D(data.climate.start),RAIN=data.climate.rain;
+const rainAt=ms=>{const i=Math.round((ms-T0)/MS);return i>=0&&i<RAIN.length?RAIN[i]:undefined};
+const MON=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const dstr=ms=>{const d=new Date(ms);return `${d.getUTCDate()} ${MON[d.getUTCMonth()]}`};
+const dfull=ms=>`${dstr(ms)} ${new Date(ms).getUTCFullYear()}`;
+const nf=v=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:0}).format(v);
+const STAT={favorable:'Clima favorável',unfavorable:'Restrição de clima',indeterminate:'Sem dado'},GLY={favorable:'✓',unfavorable:'×',indeterminate:'?'};
+const planBy={},rowBy={};for(const r of plan)planBy[r.year]=r;for(const r of rows)rowBy[r.year+'-'+r.month]=r;
+const years=plan.map(r=>r.year);
+const quant=(a,f)=>{if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),i=(s.length-1)*f,l=Math.floor(i);return s[l]+(s[Math.min(l+1,s.length-1)]-s[l])*(i-l)};
+const S={year:(plan.filter(r=>r.status!=='indeterminate').pop()||plan[plan.length-1]).year,month:null};
+const cur=()=>S.month?rowBy[S.year+'-'+S.month]:planBy[S.year];
+
+/* ---------- utilidades de SVG e dica ---------- */
+function svg(w,h,label){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',`0 0 ${w} ${h}`);s.setAttribute('width',w);s.setAttribute('height',h);s.setAttribute('role','img');if(label)s.setAttribute('aria-label',label);return s}
+function add(par,tag,attrs,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;par.append(e);return e}
+const tip=el('tip');
+function showTip(ev,title,list){tip.replaceChildren();const t=document.createElement('div');t.className='tt';t.textContent=title;tip.append(t);
+ for(const [k,v,color] of list){const r=document.createElement('div');r.className='tr';if(color){const i=document.createElement('i');i.style.background=color;r.append(i)}const b=document.createElement('b');b.textContent=v;const s=document.createElement('span');s.textContent=k;r.append(b,s);tip.append(r)}
+ tip.hidden=false;let x=ev.clientX+14,y=ev.clientY+14;const w=tip.offsetWidth,h=tip.offsetHeight;if(x+w>innerWidth-4)x=ev.clientX-w-14;if(y+h>innerHeight-4)y=ev.clientY-h-14;tip.style.left=Math.max(4,x)+'px';tip.style.top=Math.max(4,y)+'px'}
+const hideTip=()=>{tip.hidden=true};
+function niceMax(v){for(const s of [20,50,100,150,200,250,300,400,500,600,800,1000])if(v<=s)return s;return Math.ceil(v/200)*200}
+function weekSum(ms){let s=0;for(let i=0;i<7;i++){const v=rainAt(ms+i*MS);if(v==null)return null;s+=v}return s}
+const medWeek=(()=>{const cols=Array.from({length:52},()=>[]);const y1=new Date(T0).getUTCFullYear()+1,y2=new Date(T0+(RAIN.length-1)*MS).getUTCFullYear()-1;
+ for(let y=y1;y<=y2;y++){const s=Date.UTC(y,6,1);for(let k=0;k<52;k++){const v=weekSum(s+k*7*MS);if(v!=null)cols[k].push(v)}}return cols.map(a=>quant(a,.5))})();
+
+/* ---------- cabeçalho e indicadores ---------- */
+el('c-loc').textContent=`${(meta.latitude??0).toFixed(2)}, ${(meta.longitude??0).toFixed(2)}`;
+{const src=data.sources||{},y0=new Date(T0).getUTCFullYear(),y1=new Date(T0+(RAIN.length-1)*MS).getUTCFullYear(),g=meta.generated?new Date(meta.generated):null;
+ el('src').textContent=`Chuva diária ${y0}–${y1}: ${src.historical||'histórico indisponível'} (histórico) e ${src.future||'projeção indisponível'} (cenário), com NASA POWER sobreposta onde há observação recente. Gerado em ${g?g.toLocaleDateString('pt-BR'):'—'}.`}
+el('c-breed').textContent=`${p.raca} · gestação ${p.gestation_days} d · monta ${p.monta_days} d`;
+const errs=Object.entries(meta.source_errors||{});
+if(errs.length){const w=document.createElement('div');w.className='warn';w.textContent='Fontes indisponíveis: '+errs.map(([k,v])=>`${k} (${v})`).join('; ');el('warn').append(w)}
+const yr=el('yr');yr.min=years[0];yr.max=years[years.length-1];yr.step=1;el('ymin').textContent=years[0];el('ymax').textContent=years[years.length-1];
+function setYear(y,month=null){if(!planBy[y])return;S.year=y;S.month=month;render()}
+yr.addEventListener('input',()=>setYear(+yr.value,S.month));
+el('prev').addEventListener('click',()=>setYear(S.year-1,S.month));el('next').addEventListener('click',()=>setYear(S.year+1,S.month));
+/* barra de cenário: ano (deslizador) + mês de início (botões com a adequação de cada mês naquele ano) */
+function renderScenario(){yr.value=S.year;el('yrout').textContent=S.year;el('prev').disabled=!planBy[S.year-1];el('next').disabled=!planBy[S.year+1];
+ const box=el('chips');box.replaceChildren();
+ const opts=[{m:0,label:'Pelas águas',row:planBy[S.year]},...MON.map((l,i)=>({m:i+1,label:l,row:rowBy[S.year+'-'+(i+1)]}))];
+ for(const o of opts){const b=document.createElement('button');b.type='button';b.className='chipb';b.setAttribute('role','radio');b.setAttribute('aria-checked',String(o.m===(S.month||0)));
+  const a=o.row?o.row.adequacy_percent:null,dot=document.createElement('i');dot.style.background=a==null?'transparent':heat(a);b.append(dot,document.createTextNode(o.label));
+  b.title=a==null?`${o.label}: sem dado`:`${o.label}: adequação ${a} de 100`;b.addEventListener('click',()=>{S.month=o.m||null;render()});box.append(b)}
+ const r=cur(),a=r.adequacy_percent,n=el('scnnote');n.replaceChildren();
+ const bold=s=>{const e=document.createElement('b');e.textContent=s;return e};
+ n.append('Mostrando a monta ',bold(S.month?`começando em ${MON[S.month-1]}`:'pelas águas'),' de ',bold(String(S.year)),
+  r.monta_start?` · começa em ${dstr(D(r.monta_start))}`:' · sem início definido neste ano',a==null?'':` · adequação ${a} de 100`)}
+function kpi(l,v,s,cls=''){const d=document.createElement('div');d.className='kpi '+cls;const a=document.createElement('div');a.className='l';a.textContent=l;const b=document.createElement('div');b.className='v';if(Array.isArray(v)){b.append(document.createTextNode(v[0]));const u=document.createElement('small');u.textContent=' '+v[1];b.append(u)}else b.textContent=v;const c=document.createElement('div');c.className='s';c.textContent=s||' ';d.append(a,b,c);return d}
+function pyYear(r){const d=new Date(D(r.monta_start));return d.getUTCFullYear()-(d.getUTCMonth()<6?1:0)}
+function renderKpis(){const r=cur(),box=el('kpis');box.replaceChildren();
+ const dry=(planBy[r.monta_start?pyYear(r):S.year]||{}).dry_season;
+ const medSeca=quant(plan.filter(q=>q.dry_season).map(q=>q.dry_season.days),.5),medIni=quant(plan.filter(q=>q.monta_start).map(q=>dayN(q.year,q.monta_start)),.5);
+ const dSeca=dry&&medSeca!=null?Math.round(dry.days-medSeca):null;
+ const cmpSeca=dSeca==null?'':` · mediana ${nf(medSeca)} d (${dSeca===0?'igual':(dSeca>0?'+':'')+dSeca})`;
+ const dIni=r.monta_start&&!S.month&&medIni!=null?Math.round(dayN(S.year,r.monta_start)-medIni):null;
+ const cmpIni=dIni==null?'':` · mediana ${dayLabel(Math.round(medIni))} (${dIni===0?'igual':Math.abs(dIni)+' d '+(dIni<0?'antes':'depois')})`;
+ box.append(kpi('Seca',dry?[nf(dry.days),'dias']:['—',''],dry?`${dstr(D(dry.start))} → ${dstr(D(dry.end))}${cmpSeca}`:'sem dado','hero'));
+ if(r.monta_start){box.append(kpi('Início da monta',dstr(D(r.monta_start)),(S.month?'mês fixo':'pelas águas')+cmpIni),kpi('Partos',`${dstr(D(r.calving_first))} – ${dstr(D(r.calving_last))}`,String(new Date(D(r.calving_first)).getUTCFullYear())),kpi('Desmama',dstr(D(r.weaning_date)),String(new Date(D(r.weaning_date)).getUTCFullYear())))}
+ else box.append(kpi('Início da monta','—','águas não chegaram'),kpi('Partos','—'),kpi('Desmama','—'));
+ const pill=document.createElement('div');pill.className='pill '+r.status;const i=document.createElement('i');i.textContent=GLY[r.status];const t=document.createElement('span');t.textContent=STAT[r.status];pill.append(i,t);box.append(pill)}
+
+/* ---------- gráfico principal: ciclo sobre a chuva ---------- */
+function drawTimeline(){const host=el('tl');host.replaceChildren();const r=cur();
+ if(!r.monta_start){host.innerHTML='';const e=document.createElement('div');e.className='empty';e.textContent='Sem início das águas neste ano: '+(r.reasons||[]).join('; ');host.append(e);return}
+ const W=Math.max(300,host.clientWidth),m={l:34,r:10,t:20,b:34},rainH=150,laneTop=m.t+rainH+38,H=laneTop+3*17+m.b;
+ const ms0=D(r.monta_start),sd=new Date(ms0),y0=sd.getUTCFullYear()-(sd.getUTCMonth()<6?1:0);
+ const start=Date.UTC(y0,6,1),end=D(r.weaning_date)+60*MS,pw=W-m.l-m.r,x=ms=>m.l+(ms-start)/(end-start)*pw;
+ const weeks=[];for(let t=start;t<end;t+=7*MS){weeks.push({t,s:weekSum(t),k:weeks.length%52})}
+ const ymax=niceMax(Math.max(30,...weeks.map(w=>w.s||0),...medWeek.map(v=>v||0)));const y=v=>m.t+rainH-v/ymax*rainH;
+ const s=svg(W,H,`Chuva semanal de ${dstr(start)} ${y0} a ${dfull(end)} com monta, partos e desmama`);
+ for(const v of [0,ymax/2,ymax]){add(s,'line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),class:'grid-hair'});add(s,'text',{x:m.l-6,y:y(v)+4,'text-anchor':'end'},nf(v))}
+ add(s,'text',{x:m.l,y:m.t-8,class:'ink'},'mm por semana');
+ for(const yr of [y0,y0+1,y0+2]){const d=(planBy[yr]||{}).dry_season;if(!d)continue;const a=Math.max(D(d.start),start),b=Math.min(D(d.end),end);if(b<=a)continue;
+  add(s,'rect',{x:x(a),y:m.t,width:x(b)-x(a),height:rainH,fill:'var(--seca)'});
+  if(x(b)-x(a)>70)add(s,'text',{x:x(a)+6,y:m.t+12,class:'ink'},`seca · ${nf(d.days)} d`)}
+ for(const v of [0,ymax/2,ymax])add(s,'line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),class:'grid-hair',opacity:.55});
+ for(const w of weeks){if(w.s==null)continue;const bw=Math.max(1,x(w.t+7*MS)-x(w.t)-2);add(s,'rect',{x:x(w.t)+1,y:y(w.s),width:bw,height:Math.max(0,m.t+rainH-y(w.s)),rx:Math.min(2,bw/2),fill:'var(--s1)'})}
+ const mp=weeks.filter(w=>medWeek[w.k]!=null).map(w=>`${x(w.t+3.5*MS).toFixed(1)},${y(medWeek[w.k]).toFixed(1)}`);
+ if(mp.length)add(s,'polyline',{points:mp.join(' '),fill:'none',stroke:'var(--muted)','stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round'});
+ add(s,'line',{x1:m.l,x2:W-m.r,y1:m.t+rainH,y2:m.t+rainH,class:'axis-line'});
+ const xm=x(ms0);add(s,'line',{x1:xm,x2:xm,y1:m.t,y2:laneTop+3*17,stroke:'var(--ink2)','stroke-width':1});
+ add(s,'circle',{cx:xm,cy:m.t,r:5,fill:'var(--monta)',stroke:'var(--surface)','stroke-width':2});
+ const lab=S.month?'início da monta':`águas: ${p.onset_rain_mm} mm → monta`;const lr=xm>W-170;add(s,'text',{x:lr?xm-9:xm+9,y:m.t-6,'text-anchor':lr?'end':'start',class:'strong'},lab);
+ const lane=(i,a,b,fill,label,inside)=>{const ya=laneTop+i*17,xa=x(a),xb=Math.max(x(b),xa+3);add(s,'rect',{x:xa,y:ya,width:xb-xa,height:11,rx:3,fill});
+  const fits=inside&&xb-xa>90;add(s,'text',{x:fits?xa+8:(xb+8>W-80?xa-8:xb+8),y:ya+9.5,'text-anchor':fits||xb+8<=W-80?'start':'end',class:'ink'},label)};
+ lane(0,ms0,D(r.monta_end)+MS,'var(--monta)',`monta · ${dstr(ms0)} – ${dstr(D(r.monta_end))}`);
+ lane(1,D(r.calving_first),D(r.calving_last)+MS,'var(--parto)',`partos · ${dstr(D(r.calving_first))} – ${dstr(D(r.calving_last))}`);
+ lane(2,D(r.calving_mid),D(r.weaning_date),'var(--amam)',`amamentação · ${p.suckling_days} d`,true);
+ const xw=x(D(r.weaning_date)),yw=laneTop+2*17+5.5;add(s,'path',{d:`M${xw},${yw-8}L${xw+7},${yw}L${xw},${yw+8}L${xw-7},${yw}Z`,fill:'var(--ink)',stroke:'var(--surface)','stroke-width':2});
+ add(s,'text',{x:xw,y:yw+22,'text-anchor':'middle',class:'strong'},`desmama ${dstr(D(r.weaning_date))}`);
+ const px=pw/((end-start)/(30.4*MS)),step=px<26?3:1;let first=true;
+ for(let d=new Date(start);d.getTime()<end;d=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1))){const mm=d.getUTCMonth();if(mm%step!==0&&!(first&&false))continue;const xx=x(d.getTime());
+  add(s,'line',{x1:xx,x2:xx,y1:m.t+rainH,y2:m.t+rainH+4,class:'axis-line'});add(s,'text',{x:xx+2,y:m.t+rainH+16,class:'ink'},MON[mm]);
+  if(mm===0||first){add(s,'text',{x:xx+2,y:m.t+rainH+28,class:'strong'},String(d.getUTCFullYear()))}first=false}
+ const cross=add(s,'line',{y1:m.t,y2:m.t+rainH,stroke:'var(--ink2)','stroke-width':1,visibility:'hidden'});
+ const hit=add(s,'rect',{x:m.l,y:m.t,width:pw,height:rainH,fill:'transparent'});
+ hit.addEventListener('pointermove',ev=>{const rc=s.getBoundingClientRect(),px=(ev.clientX-rc.left)*(W/rc.width),t=start+(px-m.l)/pw*(end-start),k=Math.max(0,Math.min(weeks.length-1,Math.floor((t-start)/(7*MS)))),w=weeks[k];
+  cross.setAttribute('x1',x(w.t+3.5*MS));cross.setAttribute('x2',x(w.t+3.5*MS));cross.setAttribute('visibility','visible');
+  const inDry=[y0,y0+1,y0+2].some(yr=>{const d=(planBy[yr]||{}).dry_season;return d&&w.t>=D(d.start)&&w.t<D(d.end)});
+  showTip(ev,`${dstr(w.t)} – ${dstr(w.t+6*MS)} ${new Date(w.t).getUTCFullYear()}`,[['chuva na semana',w.s==null?'sem dado':nf(w.s)+' mm','var(--s1)'],['mediana',medWeek[w.k]==null?'—':nf(medWeek[w.k])+' mm','var(--muted)'],...(inDry?[['período','seca']]:[])])});
+ hit.addEventListener('pointerleave',()=>{cross.setAttribute('visibility','hidden');hideTip()});
+ host.append(s)}
+
+/* ---------- medidores: por que / exposição ---------- */
+function meter(label,sub,val,limit,dir,unit){const row=document.createElement('div');row.className='meter';
+ const n=document.createElement('div');n.className='n';n.textContent=label;if(sub){const sm=document.createElement('small');sm.textContent=sub;n.append(sm)}
+ const info=limit==null; // sem limite validado: mostra o valor, sem veredito
+ const track=document.createElement('div');track.className='track';const st=val==null?'na':info?'info':(dir==='min'?val>=limit:val<=limit)?'ok':'no';
+ const scale=Math.max(val||0,info?100:limit*1.5)||1;const fill=document.createElement('div');fill.className='fill '+st;fill.style.width=val==null?'0%':Math.max(2,100*val/scale)+'%';
+ track.append(fill);if(!info){const tk=document.createElement('div');tk.className='tick';tk.style.left=`calc(${100*limit/scale}% - 1px)`;track.append(tk)}
+ const v=document.createElement('div');v.className='v';const b=document.createElement('b');b.textContent=val==null?'—':nf(val);v.append(b,document.createTextNode(val==null?'':' '+unit));
+ if(!info){const ic=document.createElement('span');ic.className='ico '+st;ic.textContent={ok:'✓',no:'×',na:'?'}[st];v.append(ic)}
+ row.title=`${label}: ${val==null?'sem dado':nf(val)+' '+unit} · `+(info?'sem limite validado (só informativo)':`limite ${nf(limit)} ${unit} (${dir==='min'?'mínimo':'máximo'})`);row.append(n,track,v);return row}
+function renderWhy(){const r=cur(),box=el('why');box.replaceChildren();
+ if(!r.monta_start){const e=document.createElement('div');e.className='empty';e.textContent=(r.reasons||[]).join('; ')||'Sem dado';box.append(e);return}
+ box.append(meter('Chuva até a monta',S.month?`${p.onset_days} dias antes`:'desde 1º de set',r.onset_rain_mm,p.onset_rain_mm,'min','mm'),
+  meter('Chuva na amamentação',`${p.suckling_days} dias`,r.rainfall_mm,p.min_rain_mm,'min','mm'),
+  meter('Maior veranico','secos seguidos, nov–mar',r.longest_dry_spell_days,p.max_longest_dry_spell_days,'max','dias'),
+  meter('Dias secos','na amamentação · só informa',r.dry_fraction==null?null:100*r.dry_fraction,p.max_dry_fraction==null?null:100*p.max_dry_fraction,'max','%'))}
+function renderExpo(){const r=planBy[S.year],box=el('expo');box.replaceChildren();
+ if(S.month||!r||!r.days_exposed_next_monta){const e=document.createElement('div');e.className='empty';e.textContent=S.month?'Disponível só no plano pelas águas.':'Sem monta seguinte para comparar.';box.append(e);return}
+ for(const [k,l] of [['first','Primeiros partos'],['mid','Partos medianos'],['last','Últimos partos']])box.append(meter(l,null,r.days_exposed_next_monta[k],p.estrous_cycle_days,'min','dias'))}
+
+/* ---------- calendário mês × ano ---------- */
+/* escala de cor: map(valor, a, b, c, d) remapeia linearmente [a,b] -> [c,d]; o percentual percorre os pontos do gradiente */
+const map=(v,a,b,c,d)=>c+(v-a)*(d-c)/(b-a);
+const STOPS=[[0,[26,26,26]],[25,[255,0,0]],[50,[255,140,0]],[75,[255,229,0]],[100,[0,255,21]]]; // preto = 0, verde = 100
+function heat(pct){const p=Math.max(0,Math.min(100,pct));let i=0;while(i<STOPS.length-2&&p>STOPS[i+1][0])i++;
+ const [p0,c0]=STOPS[i],[p1,c1]=STOPS[i+1];return `rgb(${c0.map((v,k)=>Math.round(map(p,p0,p1,v,c1[k]))).join(',')})`}
+function drawHeat(){const host=el('heat');host.replaceChildren();const W=Math.max(300,host.clientWidth),L=44,T=26,rh=24;
+ const ys=[...new Set(rows.map(r=>r.year))],n=ys.length,cw=(W-L)/n,gap=cw>=10?3:1,H=T+12*rh+6;
+ const s=svg(W,H,'Situação por ano e mês de início da monta');s.setAttribute('tabindex','0');
+ const cx=y=>L+ys.indexOf(y)*cw,ry=mo=>T+(mo-1)*rh;
+ add(s,'rect',{x:cx(S.year),y:T-4,width:cw,height:12*rh+4,fill:'var(--seca)',rx:3});
+ if(S.month)add(s,'rect',{x:L-2,y:ry(S.month)-1,width:W-L+2,height:rh,fill:'var(--seca)',rx:3});
+ ys.forEach(y=>{if(y%10===0)add(s,'line',{x1:cx(y),x2:cx(y),y1:T-4,y2:T+12*rh,class:'grid-hair'})});
+ const yq=cw>=15?5:10;
+ ys.forEach(y=>{if(y%yq===0||y===S.year&&cw>=10)add(s,'text',{x:cx(y)+cw/2,y:T-10,'text-anchor':'middle',class:y===S.year?'strong':'ink'},String(y))});
+ MON.forEach((l,i)=>add(s,'text',{x:L-8,y:ry(i+1)+rh/2+4,'text-anchor':'end',class:S.month===i+1?'strong':'ink',style:'font-size:12px'},l));
+ for(const r of rows){const x0=cx(r.year)+gap/2,y0=ry(r.month)+gap/2,w=cw-gap,h=rh-gap,g=add(s,'g',{});
+  const a=r.adequacy_percent,col=a==null?null:heat(a);
+  add(g,'rect',{x:x0,y:y0,width:w,height:h,rx:Math.min(3,w/2),fill:col||'none',stroke:col?'rgba(255,255,255,.10)':'var(--axis)','stroke-width':1});
+  g.setAttribute('role','img');g.setAttribute('aria-label',`${MON[r.month-1]} ${r.year}: ${a==null?'sem dado':'adequação '+a+' de 100'}`);
+  if(r.year===S.year&&r.month===S.month)add(g,'rect',{x:x0-1,y:y0-1,width:w+2,height:h+2,rx:5,fill:'none',stroke:'var(--ink)','stroke-width':2});
+  g.style.cursor='pointer';g.setAttribute('data-y',r.year);g.setAttribute('data-m',r.month);
+  g.addEventListener('pointermove',ev=>showTip(ev,`Monta começando em ${MON[r.month-1]} de ${r.year}`,[['adequação',a==null?'sem dado':`${a} de 100`,col],...(r.limiting?[['mais fraco',r.limiting]]:[]),...(r.rainfall_mm!=null?[['chuva na amamentação',nf(r.rainfall_mm)+' mm']]:[])]));
+  g.addEventListener('pointerleave',hideTip)}
+ s.addEventListener('click',ev=>{const g=ev.target.closest('[data-y]');if(g)setYear(+g.dataset.y,+g.dataset.m)});
+ s.addEventListener('keydown',ev=>{const k={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[ev.key];if(!k)return;ev.preventDefault();
+  const mo=S.month?Math.max(1,Math.min(12,S.month+k[1])):(k[1]>0?1:null);setYear(Math.max(ys[0],Math.min(ys[n-1],S.year+k[0])),mo);el('heat').querySelector('svg').focus()});
+ host.append(s)}
+/* ---------- séries por ano: início das águas e seca ---------- */
+const W0=host=>host.clientWidth<420?72:92; // margem direita para o rótulo da mediana
+function yearChart(host,pts,o){host.replaceChildren();const W=Math.max(280,host.clientWidth),m={l:40,r:W0(host),t:12,b:22},H=m.t+o.h+m.b;
+ const vals=pts.filter(q=>q.v!=null).map(q=>q.v);if(!vals.length){const e=document.createElement('div');e.className='empty';e.textContent='Sem dado';host.append(e);return}
+ const lo=o.lo(vals),hi=o.hi(vals),n=pts.length,pw=W-m.l-m.r,step=pw/n,x=i=>m.l+(i+.5)*step,y=v=>m.t+o.h-(v-lo)/(hi-lo)*o.h;
+ const s=svg(W,H,o.label);
+ for(const t of o.ticks(lo,hi)){add(s,'line',{x1:m.l,x2:W-m.r,y1:y(t),y2:y(t),class:'grid-hair'});add(s,'text',{x:m.l-6,y:y(t)+4,'text-anchor':'end'},o.fmt(t))}
+ const med=quant(vals,.5),p10=quant(vals,.1),p90=quant(vals,.9);
+ if(o.band){add(s,'rect',{x:m.l,y:y(p90),width:W-m.l-m.r,height:Math.max(1,y(p10)-y(p90)),fill:'var(--s1)',opacity:.13});
+  add(s,'text',{x:W-m.r+5,y:y(p90)+4,class:'ink'},`P90 ${o.fmt(p90)}`);add(s,'text',{x:W-m.r+5,y:y(p10)+4,class:'ink'},`P10 ${o.fmt(p10)}`)}
+ if(o.type==='col'){const bw=Math.max(2,Math.min(24,step-2));pts.forEach((q,i)=>{if(q.v==null)return;const sel=q.year===S.year;const h=Math.max(1,m.t+o.h-y(q.v));
+   add(s,'path',{d:`M${x(i)-bw/2},${m.t+o.h}V${y(q.v)+Math.min(4,h)}Q${x(i)-bw/2},${y(q.v)} ${x(i)-bw/2+Math.min(4,bw/2)},${y(q.v)}H${x(i)+bw/2-Math.min(4,bw/2)}Q${x(i)+bw/2},${y(q.v)} ${x(i)+bw/2},${y(q.v)+Math.min(4,h)}V${m.t+o.h}Z`,fill:sel?'var(--s1)':'var(--s1-rest)'})})}
+ else{let d='';pts.forEach((q,i)=>{d+=q.v==null?'':(d&&pts[i-1]&&pts[i-1].v!=null?'L':'M')+`${x(i).toFixed(1)},${y(q.v).toFixed(1)}`});add(s,'path',{d,fill:'none',stroke:'var(--s1)','stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round'})}
+ add(s,'line',{x1:m.l,x2:W-m.r,y1:y(med),y2:y(med),stroke:'var(--muted)','stroke-width':1});add(s,'text',{x:W-m.r+5,y:y(med)+4,class:'ink'},`mediana ${o.fmt(med)}`);
+ add(s,'line',{x1:m.l,x2:W-m.r,y1:m.t+o.h,y2:m.t+o.h,class:'axis-line'});
+ pts.forEach((q,i)=>{if(q.year%10===0||q.year===pts[n-1].year&&(pts[n-1].year%10>4))add(s,'text',{x:x(i),y:H-6,'text-anchor':'middle'},String(q.year))});
+ const si=pts.findIndex(q=>q.year===S.year);
+ if(si>=0&&pts[si].v!=null){add(s,'line',{x1:x(si),x2:x(si),y1:m.t,y2:m.t+o.h,stroke:'var(--ink2)','stroke-width':1,opacity:.5});
+  if(o.type!=='col')add(s,'circle',{cx:x(si),cy:y(pts[si].v),r:5,fill:'var(--s1)',stroke:'var(--surface)','stroke-width':2});
+  add(s,'text',{x:Math.min(W-m.r-30,Math.max(m.l+30,x(si))),y:m.t-1,'text-anchor':'middle',class:'strong'},`${S.year}: ${o.fmt(pts[si].v)}`)}
+ const cross=add(s,'line',{y1:m.t,y2:m.t+o.h,stroke:'var(--ink2)','stroke-width':1,visibility:'hidden'});
+ const hit=add(s,'rect',{x:m.l,y:m.t,width:pw,height:o.h,fill:'transparent',style:'cursor:pointer'});
+ const idx=ev=>{const rc=s.getBoundingClientRect(),px=(ev.clientX-rc.left)*(W/rc.width);return Math.max(0,Math.min(n-1,Math.floor((px-m.l)/step)))};
+ hit.addEventListener('pointermove',ev=>{const i=idx(ev),q=pts[i];cross.setAttribute('x1',x(i));cross.setAttribute('x2',x(i));cross.setAttribute('visibility','visible');showTip(ev,String(q.year),[[o.name,q.v==null?'sem dado':o.fmt(q.v),'var(--s1)'],['mediana',o.fmt(med),'var(--muted)'],...(o.band?[['faixa P10–P90',` a `,'var(--s1)']]:[])])});
+ hit.addEventListener('pointerleave',()=>{cross.setAttribute('visibility','hidden');hideTip()});
+ hit.addEventListener('click',ev=>setYear(pts[idx(ev)].year));
+ host.append(s)}
+const dayN=(y,iso)=>(D(iso)-Date.UTC(y,8,1))/MS;
+const dayLabel=(v,y=2001)=>dstr(Date.UTC(y,8,1)+v*MS);
+function drawYearCharts(){
+ const onset=plan.map(r=>({year:r.year,v:r.monta_start?dayN(r.year,r.monta_start):null}));
+ yearChart(el('onset'),onset,{h:120,type:'line',name:'início da monta',label:'Início da monta por ano',band:true,lo:v=>Math.floor(Math.min(...v)/15)*15,hi:v=>Math.ceil(Math.max(...v)/15)*15+(0),ticks:(a,b)=>{const t=[];for(let v=a;v<=b;v+=15)t.push(v);return t},fmt:v=>dayLabel(Math.round(v))});
+ const seca=plan.map(r=>({year:r.year,v:r.dry_season?r.dry_season.days:null}));
+ yearChart(el('seca'),seca,{h:120,type:'col',name:'dias de seca',label:'Duração da seca por ano',lo:()=>0,hi:v=>Math.ceil(Math.max(...v)/50)*50,ticks:(a,b)=>{const t=[];for(let v=a;v<=b;v+=50)t.push(v);return t},fmt:v=>nf(v)+' d'});
+ const med=(arr,a,b)=>quant(arr.filter(q=>q.year>=a&&q.year<=b&&q.v!=null).map(q=>q.v),.5);
+ const sh=med(seca,1991,2020),sf=med(seca,2041,2050),oh=med(onset,1991,2020),of=med(onset,2041,2050);
+ {const ov=onset.filter(q=>q.v!=null).map(q=>q.v);
+  if(ov.length)el('t-onset').textContent=`As águas chegam por volta de ${dayLabel(Math.round(quant(ov,.5)))}; em 80% dos anos, entre ${dayLabel(Math.round(quant(ov,.1)))} e ${dayLabel(Math.round(quant(ov,.9)))}`;
+  const sv=seca.filter(q=>q.v!=null).map(q=>q.v),cs=seca.find(q=>q.year===S.year);
+  if(sv.length)el('t-seca').textContent=`A seca dura ${nf(quant(sv,.5))} dias em mediana${cs&&cs.v!=null?`; em ${S.year}, ${nf(cs.v)}`:''}`}
+ el('seca-rt').textContent=sh!=null&&sf!=null?`mediana 1991–2020: ${nf(sh)} d → 2041–2050: ${nf(sf)} d`:'';
+ el('onset-rt').textContent=oh!=null&&of!=null?`mediana 1991–2020: ${dayLabel(Math.round(oh))} → 2041–2050: ${dayLabel(Math.round(of))}`:''}
+
+/* ---------- evolução da chuva: uma linha por década ---------- */
+function monthly(y1,y2){const out=Array.from({length:12},()=>[]);for(let y=y1;y<=y2;y++)for(let mo=0;mo<12;mo++){const a=Date.UTC(y,mo,1),b=Date.UTC(y,mo+1,1);let tot=0,ok=true;for(let t=a;t<b;t+=MS){const v=rainAt(t);if(v==null){ok=false;break}tot+=v}if(ok)out[mo].push(tot)}return out}
+const EVO={on:null};const DEC=[[1991,2000],[2001,2010],[2011,2020],[2021,2030],[2031,2040],[2041,2050]];
+function drawEvolution(){const host=el('mon'),leg=el('mon-leg');host.replaceChildren();leg.replaceChildren();
+ const W=Math.max(300,host.clientWidth),m={l:40,r:12,t:16,b:24},h=170,H=m.t+h+m.b,order=[8,9,10,11,0,1,2,3,4,5,6,7],names=order.map(i=>MON[i]);
+ const ser=DEC.map(([a,b],k)=>{const mo=monthly(a,b);return {k,label:`${a}–${b}`,proj:a>=2021,v:order.map(i=>quant(mo[i],.5))}}).filter(s=>s.v.some(x=>x!=null));
+ if(!ser.length){host.textContent='Sem dado';return}
+ const on=EVO.on||(EVO.on=new Set([ser[0].k,ser[ser.length-1].k]));
+ for(const sr of ser){const sp=document.createElement('button'),i=document.createElement('i');sp.type='button';sp.className='lgb';sp.setAttribute('aria-pressed',String(on.has(sr.k)));i.className='ln';
+  if(sr.proj){i.style.background='none';i.style.height='0';i.style.borderTop=`2px dashed var(--d${sr.k+1})`}else i.style.background=`var(--d${sr.k+1})`;
+  sp.append(i,document.createTextNode(sr.label));sp.title='Mostrar ou ocultar esta década';sp.addEventListener('click',()=>{if(on.has(sr.k)&&on.size>1)on.delete(sr.k);else on.add(sr.k);drawEvolution()});leg.append(sp)}
+ const nt=document.createElement('span');nt.textContent='clique numa década para mostrar ou ocultar · tracejado = clima projetado · mais escuro = mais recente';nt.style.color='var(--muted)';leg.append(nt);
+ if(ser.length>1)for(const [c,tx] of [['var(--s1)','mais chuva na última década'],['var(--neg)','menos chuva']]){const sp=document.createElement('span'),i=document.createElement('i');i.className='sw';i.style.background=c;sp.append(i,document.createTextNode(tx));leg.append(sp)}
+ const top=Math.max(50,...ser.flatMap(sr=>sr.v.map(x=>x||0))),hi=niceMax(top*1.05),y=v=>m.t+h-v/hi*h,pw=W-m.l-m.r,step=pw/12,x=i=>m.l+(i+.5)*step;
+ const s=svg(W,H,'Chuva mensal mediana por década, de setembro a agosto');
+ for(const t of [0,hi/2,hi]){add(s,'line',{x1:m.l,x2:W-m.r,y1:y(t),y2:y(t),class:'grid-hair'});add(s,'text',{x:m.l-6,y:y(t)+4,'text-anchor':'end'},nf(t))}
+ add(s,'text',{x:m.l,y:m.t-5,class:'ink'},'mm por mês (mediana da década)');
+ names.forEach((n,i)=>add(s,'text',{x:x(i),y:H-7,'text-anchor':'middle'},n));
+ for(const sr of ser){if(!on.has(sr.k))continue;const pts=sr.v.map((v,i)=>v==null?null:`${x(i).toFixed(1)},${y(v).toFixed(1)}`).filter(Boolean);
+  add(s,'polyline',{points:pts.join(' '),fill:'none',stroke:`var(--d${sr.k+1})`,'stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round','stroke-dasharray':sr.proj?'6 4':'none'})}
+ add(s,'line',{x1:m.l,x2:W-m.r,y1:m.t+h,y2:m.t+h,class:'axis-line'});
+ const peak=sr=>{let bi=0;sr.v.forEach((v,i)=>{if((v||0)>(sr.v[bi]||0))bi=i});return {i:bi,v:sr.v[bi]}};
+ const first=ser[0],last=ser[ser.length-1],pf=peak(first),pl=peak(last);
+ add(s,'text',{x:x(pl.i),y:y(pl.v)-7,'text-anchor':'middle',class:'strong'},last.label);
+ if(first!==last&&(Math.abs(x(pf.i)-x(pl.i))>78||Math.abs(y(pf.v)-y(pl.v))>16))add(s,'text',{x:x(pf.i),y:y(pf.v)-7,'text-anchor':'middle',class:'strong'},first.label);
+ const tot=sr=>sr.v.reduce((a,v)=>a+(v||0),0),t1=tot(first),t2=tot(last);
+ if(first!==last){const pc=100*(t2-t1)/t1,dd=first.v.map((a,i)=>a==null||last.v[i]==null?null:last.v[i]-a),ok=dd.map((v,i)=>v==null?null:i).filter(i=>i!=null),imax=ok.reduce((b,i)=>dd[i]>dd[b]?i:b,ok[0]),imin=ok.reduce((b,i)=>dd[i]<dd[b]?i:b,ok[0]);
+  el('t-evo').textContent=`O ano pecuário chove ${nf(Math.abs(pc))}% ${pc<0?'menos':'mais'} em ${last.label} do que em ${first.label}`;
+  el('evo-rt').textContent=`mais chuva: ${names[imax]} (${dd[imax]>0?'+':''}${nf(dd[imax])} mm) · menos: ${names[imin]} (${dd[imin]>0?'+':''}${nf(dd[imin])} mm)`}
+ else el('evo-rt').textContent='';
+ const cross=add(s,'line',{y1:m.t,y2:m.t+h,stroke:'var(--ink2)','stroke-width':1,visibility:'hidden'});
+ const dots=ser.map(sr=>add(s,'circle',{r:3.5,fill:`var(--d${sr.k+1})`,stroke:'var(--surface)','stroke-width':2,visibility:'hidden'}));
+ const hit=add(s,'rect',{x:m.l,y:m.t,width:pw,height:h,fill:'transparent'});
+ hit.addEventListener('pointermove',ev=>{const rc=s.getBoundingClientRect(),px=(ev.clientX-rc.left)*(W/rc.width),i=Math.max(0,Math.min(11,Math.floor((px-m.l)/step)));
+  cross.setAttribute('x1',x(i));cross.setAttribute('x2',x(i));cross.setAttribute('visibility','visible');
+  ser.forEach((sr,j)=>{const v=sr.v[i];if(v==null||!on.has(sr.k)){dots[j].setAttribute('visibility','hidden');return}dots[j].setAttribute('cx',x(i));dots[j].setAttribute('cy',y(v));dots[j].setAttribute('visibility','visible')});
+  const f=v=>v==null?'—':nf(v)+' mm',a=first.v[i],b=last.v[i],d=a>0&&b!=null?` (${b>=a?'+':''}${nf(100*(b-a)/a)}%)`:'';
+  showTip(ev,names[i],[...ser.filter(sr=>on.has(sr.k)).map(sr=>[sr.label+(sr.proj?' (projeção)':''),f(sr.v[i]),`var(--d${sr.k+1})`]),['primeira → última década',a==null||b==null?'—':`${nf(a)} → ${nf(b)} mm${d}`]])});
+ hit.addEventListener('pointerleave',()=>{cross.setAttribute('visibility','hidden');dots.forEach(c=>c.setAttribute('visibility','hidden'));hideTip()});
+ host.append(s);drawDelta(first,last,names)}
+function drawDelta(first,last,names){const host=el('mon-d');host.replaceChildren();if(first===last){host.textContent='São precisas duas décadas para comparar';return}
+ const W=Math.max(240,host.clientWidth),m={l:40,r:8,t:16,b:24},h=170,H=m.t+h+m.b;
+ const d=first.v.map((a,i)=>a==null||last.v[i]==null?null:last.v[i]-a);
+ const hi=niceMax(Math.max(20,...d.map(v=>Math.abs(v||0)))*1.2),mid=m.t+h/2,y=v=>mid-v/hi*(h/2),pw=W-m.l-m.r,step=pw/12,x=i=>m.l+(i+.5)*step,bw=Math.min(22,step-6);
+ const s=svg(W,H,`Mudança da chuva por mês entre ${first.label} e ${last.label}`);
+ for(const t of [-hi,-hi/2,0,hi/2,hi]){add(s,'line',{x1:m.l,x2:W-m.r,y1:y(t),y2:y(t),class:t===0?'axis-line':'grid-hair'});add(s,'text',{x:m.l-6,y:y(t)+4,'text-anchor':'end'},(t>0?'+':'')+nf(t))}
+ add(s,'text',{x:m.l,y:m.t-5,class:'ink'},'mm por mês');
+ names.forEach((n,i)=>add(s,'text',{x:x(i),y:H-7,'text-anchor':'middle'},n));
+ const vals=d.filter(v=>v!=null),mxv=Math.max(...vals),mnv=Math.min(...vals);
+ d.forEach((v,i)=>{if(v==null)return;const y1=y(v),top=Math.min(mid,y1),bh=Math.max(1,Math.abs(y1-mid));
+  add(s,'rect',{x:x(i)-bw/2,y:top,width:bw,height:bh,rx:2,fill:v>=0?'var(--s1)':'var(--neg)'});
+  if((v===mxv||v===mnv)&&Math.abs(v)>=10)add(s,'text',{x:x(i),y:v>=0?y1-5:y1+13,'text-anchor':'middle',class:'strong'},(v>0?'+':'')+nf(v))});
+ const cross=add(s,'line',{y1:m.t,y2:m.t+h,stroke:'var(--ink2)','stroke-width':1,visibility:'hidden'});
+ const hit=add(s,'rect',{x:m.l,y:m.t,width:pw,height:h,fill:'transparent'});
+ hit.addEventListener('pointermove',ev=>{const rc=s.getBoundingClientRect(),px=(ev.clientX-rc.left)*(W/rc.width),i=Math.max(0,Math.min(11,Math.floor((px-m.l)/step)));
+  cross.setAttribute('x1',x(i));cross.setAttribute('x2',x(i));cross.setAttribute('visibility','visible');
+  const a=first.v[i],b=last.v[i],v=d[i];showTip(ev,names[i],[[first.label,a==null?'—':nf(a)+' mm','var(--d1)'],[last.label,b==null?'—':nf(b)+' mm','var(--d6)'],['mudança',v==null?'—':`${v>0?'+':''}${nf(v)} mm${a>0?` (${v>=0?'+':''}${nf(100*v/a)}%)`:''}`,v==null?null:v>=0?'var(--s1)':'var(--neg)']])});
+ hit.addEventListener('pointerleave',()=>{cross.setAttribute('visibility','hidden');hideTip()});
+ host.append(s)}
+/* ---------- tabela e parâmetros (equivalente em texto dos gráficos) ---------- */
+function renderTables(){const t=el('tbl');t.replaceChildren();const hd=t.createTHead().insertRow();
+ for(const h of ['Ano','Início da monta','Seca (dias)','Partos','Desmama','Chuva amamentação (mm)','Situação'])hd.insertCell().outerHTML=`<th>${h}</th>`;
+ const b=t.createTBody();for(const r of plan){const tr=b.insertRow();const v=[r.year,r.monta_start?dfull(D(r.monta_start)):'—',r.dry_season?r.dry_season.days:'—',r.monta_start?`${dstr(D(r.calving_first))} – ${dstr(D(r.calving_last))}`:'—',r.monta_start?dfull(D(r.weaning_date)):'—',r.rainfall_mm==null?'—':nf(r.rainfall_mm),`${GLY[r.status]} ${STAT[r.status]}`];for(const c of v)tr.insertCell().textContent=c}
+ const pt=el('params');pt.replaceChildren();const list=[['Gestação',`${p.gestation_days} dias (${p.raca}) — ${p.gestation_source||''}`],['Monta',`${p.monta_days} dias`],['Início das águas',`${p.onset_rain_mm} mm desde 1º/${MON[p.onset_search_month-1]} (Embrapa: 80–100 mm)`],['Amamentação',`${p.suckling_days} dias; mínimo ${p.min_rain_mm} mm (premissa)`],['Veranico máximo',`${p.max_longest_dry_spell_days} dias seguidos secos, só nos meses ${p.veranico_months.map(x=>MON[x-1]).join('/')} (premissa; Embrapa Cerrados: 15 d já é raro em jan–fev)`],['Dias secos',`${p.max_dry_fraction==null?'só informativo, sem limite validado':100*p.max_dry_fraction+'% (premissa)'}; dia seco = ${data.dry_day_definition}`],['Descanso pós-parto',`${p.postpartum_rest_days} dias (premissa)`],['Ciclo estral',`${p.estrous_cycle_days} dias (premissa a confirmar)`],['Seca (exibição)',`chuva de ${p.dry_season_window_days} dias abaixo de ${p.dry_season_rain_mm} mm, a partir de 1º/${MON[p.dry_season_search_month-1]}; termina quando as águas chegam`],['Não considerado',data.unknowns.join(', ')]];
+ for(const [k,v] of list){const tr=pt.insertRow();tr.insertCell().textContent=k;tr.insertCell().textContent=v}}
+
+/* ---------- títulos que dizem a conclusão (os rótulos curtos ficam como subtítulo) ---------- */
+function renderTitles(){const r=cur(),mes=S.month?MON[S.month-1]:null;
+ el('t-tl').textContent=!r.monta_start?'As águas não chegaram neste ano':S.month?(r.onset_rain_mm==null?`Começando em ${mes}, falta dado para avaliar`:`Começando em ${mes}, entram ${nf(r.onset_rain_mm)} mm de chuva antes da monta (o limite é ${nf(p.onset_rain_mm)})`):`A monta começa em ${dstr(D(r.monta_start))}, assim que a chuva chega a ${nf(p.onset_rain_mm)} mm`;
+ el('t-why').textContent=r.status==='favorable'?'Clima favorável: os limites de chuva e de veranico foram atingidos':r.status==='unfavorable'?`Restrição de clima: o ponto fraco é ${r.limiting||(r.reasons&&r.reasons[0])||'um dos critérios'}`:'Sem dado suficiente para avaliar';
+ const e=!S.month&&planBy[S.year]&&planBy[S.year].days_exposed_next_monta;
+ el('t-expo').textContent=!e?'Chance na próxima monta':e.last<p.estrous_cycle_days?`Os últimos partos ${e.last===0?'ficam sem chance':'só têm '+e.last+(e.last===1?' dia':' dias')} na próxima monta`:'Todos os grupos de partos têm tempo na próxima monta';
+ const att=el('attn');att.replaceChildren();att.className='';
+ if(e){const nm={first:'os primeiros partos',mid:'os partos medianos',last:'os últimos partos'},bad=['first','mid','last'].filter(k=>e[k]<p.estrous_cycle_days);
+  if(bad.length){att.className='warn';const b=document.createElement('b');b.textContent='Ponto de atenção: ';
+   att.append(b,`${bad.map(k=>`${nm[k]} (${e[k]} d)`).join(' e ')} ficam com menos de ${p.estrous_cycle_days} dias na próxima monta. Isso é informativo e não entra no índice de adequação.`)}}
+ const cand=[{l:'pelas águas',a:(planBy[S.year]||{}).adequacy_percent},...MON.map((l,i)=>({l:'em '+l,a:(rowBy[S.year+'-'+(i+1)]||{}).adequacy_percent}))].filter(c=>c.a!=null);
+ const best=cand.reduce((b,c)=>c.a>b.a?c:b,cand[0]);
+ el('t-cal').textContent=best?`Em ${S.year}, o melhor início é ${best.l} (${best.a} de 100)`:'E se a monta começar em outro mês?'}
+/* ---------- orquestração ---------- */
+function render(){renderScenario();renderTitles();
+ renderKpis();
+drawTimeline();renderWhy();renderExpo();drawHeat();drawYearCharts()}
+renderTables();drawEvolution();render();
+let timer;new ResizeObserver(()=>{clearTimeout(timer);timer=setTimeout(()=>{drawTimeline();drawHeat();drawYearCharts();drawEvolution()},120)}).observe(document.body);
+})();
+</script></body></html>

@@ -1,0 +1,13 @@
+version: 4.0.0-dev1
+log_level: INFO
+connectors:
+  timeout: 20
+  cache_ttl: 86400
+coordinates:
+  latitude_min: -90
+  latitude_max: 90
+  longitude_min: -180
+  longitude_max: 180
+assessment:
+  reference_years: [1991, 2020]
+  future_until: 2050
